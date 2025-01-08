@@ -2,10 +2,10 @@ const jwt = require('jsonwebtoken');
 const loginModel = require('../models/loginModel');
 
 const login = async (req, res) => {
-  const { username, password } = req.body;
+  const { email, password } = req.body;
 
   try {
-    const user = await loginModel.getUserByUsername(username);
+    const user = await loginModel.getUserByUsername(email);
 
     if (!user) {
       return res.status(400).json({ message: 'Invalid credentials' });
@@ -32,7 +32,7 @@ const login = async (req, res) => {
       token,
       user: {
         id: user.id,
-        username: user.username,
+        email: user.email,
         role_id: user.role_id,
       },
     });
