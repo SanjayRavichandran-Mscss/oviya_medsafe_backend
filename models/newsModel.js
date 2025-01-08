@@ -1,59 +1,55 @@
-const db = require('../config/db'); // Assuming you're using MySQL or similar
+const pool = require("../config/db");  // Assuming you're using a connection pool for MySQL
 
 // Get all news
-exports.getAllNews = () => {
-  return new Promise((resolve, reject) => {
-    db.query("SELECT * FROM news", (err, results) => {
-      if (err) reject(err);
-      else resolve(results);
-    });
-  });
+exports.getAllNews = async () => {
+  try {
+    const [rows] = await pool.query('SELECT * FROM news');
+    return rows;  // Returning the rows directly
+  } catch (error) {
+    throw error;  // Let the controller handle the error
+  }
 };
 
 // Get news by ID
-exports.getNewsById = (id) => {
-  return new Promise((resolve, reject) => {
-    db.query("SELECT * FROM news WHERE id = ?", [id], (err, results) => {
-      if (err) reject(err);
-      else resolve(results[0]);
-    });
-  });
+exports.getNewsById = async (id) => {
+  try {
+    const [rows] = await pool.query('SELECT * FROM news WHERE id = ?', [id]);
+    return rows[0];  // Return the first result
+  } catch (error) {
+    throw error;
+  }
 };
 
 // Create new news
-exports.createNews = ({ category_id, news_title, news_short_title, date, image, news_content }) => {
-  return new Promise((resolve, reject) => {
-    db.query(
-      "INSERT INTO news (category_id, news_title, news_short_title, date, image, news_content) VALUES (?, ?, ?, ?, ?, ?)",
-      [category_id, news_title, news_short_title, date, image, news_content],
-      (err, results) => {
-        if (err) reject(err);
-        else resolve(results.insertId); // Return the ID of the newly inserted news
-      }
-    );
-  });
+exports.createNews = async (newsData) => {
+  try {
+    const { category_id, news_title, news_short_title, date, image, news_content } = newsData;
+    const [result] = await pool.query('INSERT INTO news (category_id, news_title, news_short_title, date, image, news_content) VALUES (?, ?, ?, ?, ?, ?)', 
+    [category_id, news_title, news_short_title, date, image, news_content]);
+    return result.insertId;  // Return the inserted ID
+  } catch (error) {
+    throw error;
+  }
 };
 
 // Update news by ID
-exports.updateNews = (id, { category_id, news_title, news_short_title, date, image, news_content }) => {
-  return new Promise((resolve, reject) => {
-    db.query(
-      "UPDATE news SET category_id = ?, news_title = ?, news_short_title = ?, date = ?, image = ?, news_content = ? WHERE id = ?",
-      [category_id, news_title, news_short_title, date, image, news_content, id],
-      (err, results) => {
-        if (err) reject(err);
-        else resolve(results.affectedRows); // Return the number of affected rows
-      }
-    );
-  });
+exports.updateNews = async (id, newsData) => {
+  try {
+    const { category_id, news_title, news_short_title, date, image, news_content } = newsData;
+    const [result] = await pool.query('UPDATE news SET category_id = ?, news_title = ?, news_short_title = ?, date = ?, image = ?, news_content = ? WHERE id = ?', 
+    [category_id, news_title, news_short_title, date, image, news_content, id]);
+    return result.affectedRows;  // Return number of affected rows
+  } catch (error) {
+    throw error;
+  }
 };
 
 // Delete news by ID
-exports.deleteNews = (id) => {
-  return new Promise((resolve, reject) => {
-    db.query("DELETE FROM news WHERE id = ?", [id], (err, results) => {
-      if (err) reject(err);
-      else resolve(results.affectedRows); // Return the number of affected rows
-    });
-  });
+exports.deleteNews = async (id) => {
+  try {
+    const [result] = await pool.query('DELETE FROM news WHERE id = ?', [id]);
+    return result.affectedRows;  // Return number of affected rows
+  } catch (error) {
+    throw error;
+  }
 };

@@ -6,7 +6,6 @@ exports.getAllNews = async (req, res) => {
     const news = await newsModel.getAllNews();
     res.status(200).json(news);
   } catch (error) {
-    console.error(error); // Log the error to the console
     res.status(500).json({ error: "Failed to fetch news" });
   }
 };
@@ -20,7 +19,6 @@ exports.getNewsById = async (req, res) => {
     }
     res.status(200).json(news);
   } catch (error) {
-    console.error(error); // Log the error to the console
     res.status(500).json({ error: "Failed to fetch news" });
   }
 };
@@ -35,21 +33,17 @@ exports.createNews = async (req, res) => {
       return res.status(400).json({ message: "All fields except 'image' are required" });
     }
 
-    // Handle image (if exists)
-    const imageName = image ? image.name : null; // If image is uploaded, get its name
-
     const newsId = await newsModel.createNews({
       category_id,
       news_title,
       news_short_title,
       date,
-      image: imageName,
+      image,
       news_content,
     });
 
     res.status(201).json({ message: "News created successfully", newsId });
   } catch (error) {
-    console.error(error); // Log the error to the console
     res.status(500).json({ error: "Failed to create news" });
   }
 };
@@ -64,15 +58,12 @@ exports.updateNews = async (req, res) => {
       return res.status(400).json({ message: "All fields except 'image' are required" });
     }
 
-    // Handle image (if exists)
-    const imageName = image ? image.name : null; // If image is uploaded, get its name
-
     const affectedRows = await newsModel.updateNews(req.params.id, {
       category_id,
       news_title,
       news_short_title,
       date,
-      image: imageName,
+      image,
       news_content,
     });
 
@@ -82,7 +73,6 @@ exports.updateNews = async (req, res) => {
 
     res.status(200).json({ message: "News updated successfully" });
   } catch (error) {
-    console.error(error); // Log the error to the console
     res.status(500).json({ error: "Failed to update news" });
   }
 };
@@ -98,7 +88,6 @@ exports.deleteNews = async (req, res) => {
 
     res.status(200).json({ message: "News deleted successfully" });
   } catch (error) {
-    console.error(error); // Log the error to the console
     res.status(500).json({ error: "Failed to delete news" });
   }
 };
