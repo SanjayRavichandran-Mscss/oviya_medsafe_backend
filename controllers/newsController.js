@@ -91,3 +91,26 @@ exports.deleteNews = async (req, res) => {
     res.status(500).json({ error: "Failed to delete news" });
   }
 };
+
+
+// Update publish field by ID
+exports.updatePublish = async (req, res) => {
+  try {
+    const { publish } = req.body;
+
+    // Validate required field
+    if (publish === undefined) {
+      return res.status(400).json({ message: "'publish' field is required" });
+    }
+
+    const affectedRows = await newsModel.updatePublish(req.params.id, publish);
+
+    if (affectedRows === 0) {
+      return res.status(404).json({ message: "News not found or no changes made" });
+    }
+
+    res.status(200).json({ message: "Publish status updated successfully" });
+  } catch (error) {
+    res.status(500).json({ error: "Failed to update publish status" });
+  }
+};

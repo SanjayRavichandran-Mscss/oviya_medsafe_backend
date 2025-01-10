@@ -53,3 +53,14 @@ exports.deleteNews = async (id) => {
     throw error;
   }
 };
+
+
+// Update publish field by ID
+exports.updatePublish = async (id, publish) => {
+  try {
+    const [result] = await pool.query('UPDATE news SET publish = ? WHERE id = ?', [publish, id]);
+    return result.affectedRows; // Return number of affected rows
+  } catch (error) {
+    throw error;
+  }
+};
